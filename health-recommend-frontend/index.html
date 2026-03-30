@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>登录 - 阳光减肥 · 健康生活</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: url('https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover fixed no-repeat;
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 暖色渐变遮罩，增强阳光感，同时保证卡片可读性 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 动态粒子层 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 215, 150, 0.4);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(20px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 旋转光晕背景 */
+        .glow-orb {
+            position: fixed;
+            top: -30%;
+            left: -30%;
+            width: 160%;
+            height: 160%;
+            background: radial-gradient(circle at 30% 40%, rgba(241, 95, 43, 0.2), rgba(255, 165, 0, 0.1), transparent 70%);
+            animation: rotateGlow 25s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes rotateGlow {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 太阳光线脉冲 */
+        .sun-rays {
+            position: fixed;
+            bottom: 10%;
+            right: 5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 200, 100, 0.25) 0%, transparent 70%);
+            animation: pulseSun 4s ease-in-out infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes pulseSun {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        /* 主卡片容器 */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 460px;
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 磨砂玻璃卡片 - 加深背景以提高文字对比度 */
+        .glass-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            border-radius: 48px;
+            padding: 48px 40px;
+            border: 1px solid rgba(255, 215, 150, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 35px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Logo 区域 */
+        .logo-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #f15f2b, #ffa500);
+            border-radius: 35px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 30px rgba(241, 95, 43, 0.4);
+            animation: pulseLogo 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 15px 30px rgba(241, 95, 43, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 20px 40px rgba(241, 95, 43, 0.6);
+            }
+        }
+
+        .logo-icon i {
+            font-size: 48px;
+            color: white;
+            animation: rotateSun 8s linear infinite;
+        }
+
+        @keyframes rotateSun {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 标题改为纯白色，添加阴影增强可读性 */
+        .logo-area h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-area p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 输入框组 */
+        .input-group-custom {
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .input-group-custom .input-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .input-group-custom input {
+            width: 100%;
+            padding: 16px 20px 16px 55px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 215, 150, 0.5);
+            border-radius: 60px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .input-group-custom input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .input-group-custom input:focus {
+            outline: none;
+            border-color: #f15f2b;
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 20px rgba(241, 95, 43, 0.4);
+            transform: scale(1.02);
+        }
+
+        .input-group-custom input:focus + .input-icon {
+            color: #f15f2b;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* 登录按钮 */
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f15f2b, #ffa500);
+            border: none;
+            border-radius: 60px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(241, 95, 43, 0.5);
+        }
+
+        .login-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* 注册链接 */
+        .register-link {
+            text-align: center;
+            margin-top: 28px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .register-link a {
+            color: #ffa500;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-link a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ffa500;
+            transition: width 0.3s;
+        }
+
+        .register-link a:hover::after {
+            width: 100%;
+        }
+
+        .register-link a:hover {
+            color: #f15f2b;
+            transform: translateX(5px);
+        }
+
+        /* 错误震动动画 */
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-6px);
+            }
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        .shake-card {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* 波浪底部装饰 */
+        .wave-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(241,95,43,0.2)" fill-opacity="1" d="M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,186.7C672,192,768,224,864,224C960,224,1056,192,1152,170.7C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x bottom;
+            background-size: cover;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 576px) {
+            .glass-card {
+                padding: 35px 25px;
+            }
+            .logo-icon {
+                width: 70px;
+                height: 70px;
+            }
+            .logo-icon i {
+                font-size: 36px;
+            }
+            .logo-area h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="particles" id="particles"></div>
+    <div class="glow-orb"></div>
+    <div class="sun-rays"></div>
+    <div class="wave-bottom"></div>
+
+    <div class="login-wrapper">
+        <div class="glass-card" id="loginCard">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <h1>阳光减重</h1>
+                <p>登录后开启健康生活</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="input-group-custom">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" placeholder="用户名" required autocomplete="username">
+                </div>
+                <div class="input-group-custom">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" placeholder="密码" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt me-2"></i>登录
+                </button>
+            </form>
+
+            <div class="register-link">
+                还没有账号？ <a href="register.html">立即注册 <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module">
+        import apiClient from './js/api.js';
+
+        // 创建粒子效果
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 100;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 8 + 3;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDuration = Math.random() * 20 + 10 + 's';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // 登录表单提交
+        const form = document.getElementById('loginForm');
+        const btn = document.getElementById('loginBtn');
+        const card = document.getElementById('loginCard');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // 按钮加载动画
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse me-2"></i>登录中...';
+            btn.disabled = true;
+
+            try {
+                const res = await apiClient.post('/login', { username, password });
+                // 登录成功动画
+                btn.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                btn.innerHTML = '<i class="fas fa-check me-2"></i>登录成功！';
+                // 保存 token
+                localStorage.setItem('token', res.data.access_token);
+                localStorage.setItem('user', JSON.stringify(res.data.user));
+                // 延迟跳转，让用户看到成功反馈
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 800);
+            } catch (error) {
+                // 失败动画
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                // 卡片震动
+                card.classList.add('shake-card');
+                setTimeout(() => {
+                    card.classList.remove('shake-card');
+                }, 500);
+                // 显示错误信息
+                const errorMsg = error.response?.data?.detail || '用户名或密码错误';
+                alert(`登录失败：${errorMsg}`);
+            }
+        });
+    </script>
+</body>
+</html>

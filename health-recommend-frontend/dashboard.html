@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>首页 - 阳光减肥 · 健康生活</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <style>
+        /* ===== 阳光温暖风格 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: url('https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1600') center/cover fixed no-repeat;
+            font-family: 'Segoe UI', 'Inter', 'Poppins', system-ui, -apple-system, sans-serif;
+            color: #2c2418;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        /* 暖色渐变遮罩，增加阳光感 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 235, 200, 0.5) 0%, rgba(255, 215, 150, 0.3) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 可选的飘浮光点 */
+        .sun-sparkles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: radial-gradient(circle at 20% 40%, rgba(255, 215, 130, 0.2) 0%, transparent 50%);
+        }
+
+        /* 导航栏 - 半透暖白磨砂 */
+        .navbar {
+            background: rgba(255, 248, 235, 0.85) !important;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 215, 150, 0.6);
+        }
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: #f15f2b !important;
+        }
+        .navbar-brand i {
+            color: #ffa500;
+        }
+        .nav-link {
+            color: #4a3a28 !important;
+            font-weight: 500;
+            margin: 0 6px;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: #f15f2b;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(241, 95, 43, 0.3);
+        }
+
+        /* 主容器 */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 欢迎卡片 */
+        .welcome-card {
+            background: rgba(255, 248, 235, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            padding: 32px 40px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 215, 150, 0.6);
+        }
+        .welcome-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 248, 235, 0.9);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+        }
+        .welcome-text h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #d45e1e;
+        }
+        .welcome-text p {
+            color: #7d6b4e;
+            font-size: 1rem;
+        }
+        .welcome-icon {
+            font-size: 4rem;
+            color: #ffb347;
+            transition: transform 0.3s;
+        }
+        .welcome-card:hover .welcome-icon {
+            transform: rotate(8deg) scale(1.1);
+        }
+
+        /* 指标卡片网格 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: rgba(255, 248, 240, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 215, 150, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #ffb347, #f15f2b);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+            transform-origin: left;
+        }
+        .stat-card:hover::after {
+            transform: scaleX(1);
+        }
+        .stat-card:hover {
+            transform: translateY(-6px);
+            background: rgba(255, 248, 240, 0.95);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
+            border-color: #ffb347;
+        }
+        .stat-icon {
+            font-size: 2.8rem;
+            margin-bottom: 16px;
+            color: #f15f2b;
+        }
+        .stat-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #b87b44;
+            margin-bottom: 12px;
+        }
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #2c2418;
+            line-height: 1;
+        }
+        .stat-unit {
+            font-size: 1rem;
+            color: #b87b44;
+            margin-left: 4px;
+        }
+
+        /* 图表卡片 */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 28px;
+        }
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .chart-card {
+            background: rgba(255, 250, 240, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            border: 1px solid rgba(255, 215, 150, 0.7);
+        }
+        .chart-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 250, 240, 0.95);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .chart-header {
+            padding: 20px 24px;
+            background: rgba(255, 245, 230, 0.6);
+            border-bottom: 1px solid #ffe0b5;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #d45e1e;
+        }
+        .chart-header i {
+            margin-right: 10px;
+            color: #f15f2b;
+        }
+        .chart-body {
+            padding: 20px;
+            height: 340px;
+        }
+
+        /* 小装饰：叶子、阳光 */
+        .sun-leaf {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 80px;
+            opacity: 0.2;
+            pointer-events: none;
+            color: #ffb347;
+            z-index: 1;
+        }
+        .sun-ray {
+            position: fixed;
+            top: 10%;
+            left: 5%;
+            font-size: 120px;
+            opacity: 0.15;
+            pointer-events: none;
+            color: #ffa500;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- 阳光装饰元素 -->
+    <div class="sun-sparkles"></div>
+    <div class="sun-ray"><i class="fas fa-sun"></i></div>
+    <div class="sun-leaf"><i class="fas fa-leaf"></i></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-sun me-2"></i>健康减重</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="dashboard.html"><i class="fas fa-home"></i>首页</a></li>
+                    <li class="nav-item"><a class="nav-link" href="data-entry.html"><i class="fas fa-edit"></i>数据录入</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recommendations.html"><i class="fas fa-lightbulb"></i>推荐</a></li>
+                    <li class="nav-item"><a class="nav-link" href="archive.html"><i class="fas fa-archive"></i>健康档案</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>登出</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- 欢迎卡片 -->
+        <div class="welcome-card">
+            <div class="welcome-text">
+                <h2><i class="fas fa-smile-beam me-2"></i>您好，<span id="username"></span>！</h2>
+                <p>今天是 <span id="todayDate"></span>，让阳光陪伴您健康每一天 ☀️</p>
+            </div>
+            <div class="welcome-icon">
+                <i class="fas fa-apple-alt"></i>
+            </div>
+        </div>
+
+        <!-- 指标卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-utensils"></i></div>
+                <div class="stat-title">今日摄入</div>
+                <div class="stat-value" id="todayIntake">0</div>
+                <div class="stat-unit">千卡</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-running"></i></div>
+                <div class="stat-title">今日消耗</div>
+                <div class="stat-value" id="todayExpenditure">0</div>
+                <div class="stat-unit">千卡</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-weight-scale"></i></div>
+                <div class="stat-title">最新体重</div>
+                <div class="stat-value" id="latestWeight">--</div>
+                <div class="stat-unit">kg</div>
+            </div>
+        </div>
+
+        <!-- 图表区 -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <i class="fas fa-chart-line"></i> 体重趋势（近7天）
+                </div>
+                <div class="chart-body">
+                    <div id="weightChart" style="width:100%; height:100%;"></div>
+                </div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <i class="fas fa-fire"></i> 热量摄入 vs 消耗
+                </div>
+                <div class="chart-body">
+                    <div id="calorieChart" style="width:100%; height:100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module">
+        import apiClient from './js/api.js';
+        import { checkAuth, getUser, bindLogout } from './js/auth.js';
+
+        checkAuth();
+        bindLogout();
+
+        const user = getUser();
+        if (user) {
+            document.getElementById('username').textContent = user.username || '用户';
+        }
+
+        const today = new Date();
+        document.getElementById('todayDate').textContent = today.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // 加载仪表盘数据
+        async function loadDashboard() {
+            try {
+                const res = await apiClient.get('/dashboard/overview');
+                const data = res.data;
+
+                if (data.intake.length > 0) {
+                    document.getElementById('todayIntake').textContent = data.intake[data.intake.length-1];
+                }
+                if (data.expenditure.length > 0) {
+                    document.getElementById('todayExpenditure').textContent = data.expenditure[data.expenditure.length-1];
+                }
+                const lastWeight = data.weights.filter(w => w !== null).pop();
+                document.getElementById('latestWeight').textContent = lastWeight ? lastWeight.toFixed(1) : '--';
+
+                // 体重趋势图
+                const weightChart = echarts.init(document.getElementById('weightChart'));
+                weightChart.setOption({
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                    grid: { top: 30, left: 50, right: 30, bottom: 30, containLabel: true },
+                    xAxis: {
+                        type: 'category',
+                        data: data.weightDates,
+                        axisLabel: { color: '#7d6b4e', fontWeight: 500 },
+                        axisLine: { lineStyle: { color: '#ffd9a8' } }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '体重 (kg)',
+                        nameTextStyle: { color: '#7d6b4e' },
+                        axisLabel: { color: '#4a3a28' },
+                        splitLine: { lineStyle: { color: '#ffe0b5' } }
+                    },
+                    series: [{
+                        data: data.weights,
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        lineStyle: { width: 3, color: '#f15f2b', shadowBlur: 8, shadowColor: '#ffb347' },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(241, 95, 43, 0.2)' },
+                                { offset: 1, color: 'rgba(241, 95, 43, 0.02)' }
+                            ])
+                        },
+                        itemStyle: { color: '#ffaa33', borderColor: '#fff', borderWidth: 2 }
+                    }]
+                });
+
+                // 热量柱状图
+                const calorieChart = echarts.init(document.getElementById('calorieChart'));
+                calorieChart.setOption({
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                    legend: {
+                        data: ['摄入', '消耗'],
+                        textStyle: { color: '#4a3a28' },
+                        itemWidth: 25,
+                        itemHeight: 14
+                    },
+                    grid: { top: 40, left: 50, right: 30, bottom: 30, containLabel: true },
+                    xAxis: {
+                        type: 'category',
+                        data: data.dates,
+                        axisLabel: { color: '#7d6b4e' },
+                        axisLine: { lineStyle: { color: '#ffd9a8' } }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '千卡',
+                        nameTextStyle: { color: '#7d6b4e' },
+                        axisLabel: { color: '#4a3a28' },
+                        splitLine: { lineStyle: { color: '#ffe0b5' } }
+                    },
+                    series: [
+                        {
+                            name: '摄入',
+                            type: 'bar',
+                            data: data.intake,
+                            barWidth: '30%',
+                            itemStyle: {
+                                borderRadius: [10, 10, 0, 0],
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: '#f15f2b' },
+                                    { offset: 1, color: '#ffb347' }
+                                ])
+                            }
+                        },
+                        {
+                            name: '消耗',
+                            type: 'bar',
+                            data: data.expenditure,
+                            barWidth: '30%',
+                            itemStyle: {
+                                borderRadius: [10, 10, 0, 0],
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                    { offset: 0, color: '#3b82f6' },
+                                    { offset: 1, color: '#60a5fa' }
+                                ])
+                            }
+                        }
+                    ]
+                });
+            } catch (error) {
+                console.error('加载失败', error);
+                // 友好提示，不打断界面
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>
